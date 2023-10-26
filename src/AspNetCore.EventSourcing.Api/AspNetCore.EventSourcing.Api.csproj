@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>$(MSBuildProjectName).Tests</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="7.0.0" />
+		<PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="7.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.10" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\AspNetCore.EventSourcing.Application\AspNetCore.EventSourcing.Application.csproj" />
+		<ProjectReference Include="..\AspNetCore.EventSourcing.Hosting\AspNetCore.EventSourcing.Hosting.csproj" />
+		<ProjectReference Include="..\AspNetCore.EventSourcing.Infrastructure\AspNetCore.EventSourcing.Infrastructure.csproj" />
+	</ItemGroup>
+
+</Project>
