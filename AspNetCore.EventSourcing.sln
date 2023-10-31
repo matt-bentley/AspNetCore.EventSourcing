@@ -39,8 +39,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.EventSourcing.In
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.EventSourcing.Api.Tests", "tests\AspNetCore.EventSourcing.Api.Tests\AspNetCore.EventSourcing.Api.Tests.csproj", "{F22F99C4-2D62-44EE-8453-16CB46154D7B}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "pipelines", "pipelines\pipelines.shproj", "{F518FAC2-B2FC-4438-B5B1-2B001404BA43}"
-EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "charts", "charts\charts.shproj", "{0A906579-DEE5-4EF0-BAC9-7496400B1C1E}"
 EndProject
 Global
@@ -117,6 +115,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		charts\charts.projitems*{0a906579-dee5-4ef0-bac9-7496400b1c1e}*SharedItemsImports = 13
-		pipelines\pipelines.projitems*{f518fac2-b2fc-4438-b5b1-2b001404ba43}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

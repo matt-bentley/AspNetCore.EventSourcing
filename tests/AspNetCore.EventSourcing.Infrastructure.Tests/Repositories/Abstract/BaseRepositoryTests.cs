@@ -46,7 +46,7 @@ namespace AspNetCore.EventSourcing.Infrastructure.Tests.Repositories.Abstract
             var env = Mock.Of<IHostEnvironment>();
             containerBuilder.RegisterInstance(env);
 
-            var mediator = Mock.Of<IMediator>();
+            var mediator = Mock.Of<IPublisher>();
             if (mockMediator)
             {
                 containerBuilder.RegisterInstance(mediator);

@@ -15,9 +15,5 @@
     <None Include="$(MSBuildThisFileDirectory)api\templates\database-migration-job.yaml" />
     <None Include="$(MSBuildThisFileDirectory)api\templates\web-service.yaml" />
     <None Include="$(MSBuildThisFileDirectory)api\values.yaml" />
-    <None Include="$(MSBuildThisFileDirectory)web\Chart.yaml" />
-    <None Include="$(MSBuildThisFileDirectory)web\templates\deployment.yaml" />
-    <None Include="$(MSBuildThisFileDirectory)web\templates\web-service.yaml" />
-    <None Include="$(MSBuildThisFileDirectory)web\values.yaml" />
   </ItemGroup>
 </Project>

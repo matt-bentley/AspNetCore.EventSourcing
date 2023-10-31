@@ -1,16 +1,22 @@
 
 
-# Clean Architecture 
+# AspNetCore.EventSourcing
 
-An opinionated **ASP.NET Core** solution setup for creating web applications using **Clean Architecture** and **Domain-Driven Design** principles.
+A simple ASP.NET Core **Event Sourcing** solution using **Clean Architecture** and **Domain-Driven Design** principles.
 
-The setup follows important modern development principles such as high test coverage, SOLID principles, containerisation, code-first database management, enforced code styles, API tests, architecture tests and automated acceptance testing.
+The solution keeps things simple by using a single **SQL Server** database for Event Streams (Write models) and Projections (Read models). **Entity Framework Core** is used as an ORM across the application. **MediatR** is used for **CQRS** and Event publishing.
 
-The application extends the typical *Weather Forecast* example provided in default .NET project templates and contains the following components:
+The setup follows important modern development principles such as high test coverage, SOLID principles, containerisation, code-first database management, enforced code styles, API tests and architecture tests.
+
+The application uses a simple **Banking** example with 2 Bounded Contexts:
+
+- **Customers**: Simple Entities are used to store Customers. Event Sourcing is complex and should only be used if  your requirements really need it.
+- **Accounts**: Accounts are much more complex and involve different types of Transactions. Event Sourcing is a great fit here so we can keep track of all of the different Transactions that occur on an Account over time. There is an Event Sourced **Account** Write Model, with 2 different Projections: **AccountReadModel** and **TransactionReadModel**.
+
+The .NET project contains the following components:
 
 - **API** - ASP.NET 7 REST API with Swagger support
-- **Angular SPA** - Angular SPA hosted using ASP.NET 7
-- **Database** - SQL Server/PostgreSQL database integration via Entity Framework Core
+- **Database** - SQL Server database integration via Entity Framework Core
 - **Migrations** - Code-First database migrations managed using a console application
 
 ## Table of Contents
@@ -18,12 +24,10 @@ The application extends the typical *Weather Forecast* example provided in defau
 - [Clean Architecture](#Clean-Architecture)
   - [Table of Contents](#Table-of-Contents)
   - [Quick Start](#Quick-Start)
-  - [Install Template](#Install-Template)
 - [Developer Guide](#Developer-Guide)
   - [IDE](#ide)
   - [Solution Project Structure](#Solution-Project-Structure)
   - [Nuget Libraries](#Nuget-Libraries)
-  - [Angular](#angular)
   - [Entity Framework Core](#Entity-Framework-Core)
   - [Docker](#docker)
   - [Kubernetes](#kubernetes)
@@ -33,7 +37,7 @@ The application extends the typical *Weather Forecast* example provided in defau
   - [Domain-Driven Design](#Domain-Driven-Design)
   - [Command Query Responsibility Segregation](#Command-Query-Responsibility-Segregation)
   - [Domain Events](#Domain-Events)
-  - [Data Transfer Objects and Mapping](#Data-Transfer-Objects-and-Mapping)
+  - [Read Model Projections](#Read-Model-Projections)
 - [Migrations](#Migrations)
   - [Create a Database Migration](#Create-a-Database-Migration)
   - [Run Migrations](#Run-Migrations)
@@ -44,7 +48,6 @@ The application extends the typical *Weather Forecast* example provided in defau
   - [Unit Testing](#unit-testing)
   - [API Tests](#api-tests)
   - [Architecture Tests](#Architecture-Tests)
-  - [Automated Acceptance Tests](#Automated-Acceptance-Tests)
   
 
 ## Quick Start
@@ -58,20 +61,8 @@ docker-compose --profile dev up -d
 ```
 
 2. Run the **AspNetCore.EventSourcing.Migrations** project to deploy database schema
-3. Run the **AspNetCore.EventSourcing.Api** and **AspNetCore.EventSourcing.Web** projects to debug the application
+3. Run the **AspNetCore.EventSourcing.Api** project to debug the application
 
-
-## Install Template
-
-The solution can be installed as a template to be used for creating new solutions via the .NET ClI or Visual Studio/Rider.
-
-```bash
-# Install from directory
-dotnet new install .
-
-# Uninstall from directory
-dotnet new uninstall .
-```
 
 # Developer Guide
 
@@ -94,18 +85,15 @@ VS Code is recommended for working on the Angular SPA application due to the add
 The solution is broken down into the following projects:
 
 - **AspNetCore.EventSourcing.Api** - ASP.NET 7 Web API with Swagger support
-- **AspNetCore.EventSourcing.Application** - Application layer containing Commands/Queries/Domain Event Handlers
-- **AspNetCore.EventSourcing.Core** - Domain layer containing Entities and Domain Events
+- **AspNetCore.EventSourcing.Application** - Application layer containing Commands/Queries/Domain Event Handlers/Read Model Handlers
+- **AspNetCore.EventSourcing.Core** - Domain layer containing Event Sourced Aggregates, Entities and Domain Events
 - **AspNetCore.EventSourcing.Infrastructure** - Infrastructure layer for all external integration e.g. database, notifications, serialization
-- **AspNetCore.EventSourcing.Web** - Angular SPA hosted using ASP.NET 7
 - **AspNetCore.EventSourcing.Hosting** - Hosting cross-cutting concerns e.g. configuration and logging
 - **AspNetCore.EventSourcing.Migrations** - Code-First EF database migrations and migration runner
 
 ### Test Projects
 
-Each source project has a relevant test project for Unit/API tests. The exception to this is the following:
-
-- **AspNetCore.EventSourcing.AcceptanceTests** - Automated BDD Acceptance Tests using .NET Playwright and SpecFlow
+Each source project has a relevant test project for Unit/API tests.
 
 ## Nuget Libraries
 
@@ -119,24 +107,8 @@ The following Nuget libraries are used across the solution:
 - **CSharpFunctionalExtensions** - Base Class implementation for *Entities* and *ValueObjects*
 - **XUnit** - Test runner for Unit and API tests
 - **FluentAssertions** - Fluent extension methods for running assertions in tests
-- **Playwright** - UI automation library used for *Acceptance Tests*
 - **Moq** - Test Doubles library for creating *Mocks* and *Stubs* in tests
 - **NetArchTest** - Architecture testing library
-
-## Angular
-
-Angular is used for the SPA website for this project. The code for the Angular project can be found in `src/AspNetCore.EventSourcing/ClientApp`.
-
-### Node
-
-Node.js is required to build and run the Angular SPA.
-
-### Hosting and Running
-The Angular project is hosted within an ASP.NET application. This makes deployment and configuration much easier. 
-The Web project uses the **Microsoft.AspNetCore.SpaProxy** Nuget package to handle running the relevant Angular CLI commands when the project is debugged.
-
-HTTP requests are proxied by the Web project during local development. This allows traffic with both the SPA and the API to go through the same URL so that there are no CORS issues - this is similar to how the applications will work when deployed.
-The proxy configuration can be found in the `proxy.conf.js` file in the Angular project.
 
 
 ## Entity Framework Core
@@ -178,7 +150,7 @@ The following principles are used in the code and architecture for this applicat
 
 Clean Architecture is used to split the projects used into the following layers:
 
-- Presentation - Web and API projects
+- Presentation - API project
 - Application - Application services
 - Core - Domain logic and Entities
 - Infrastucture - Services for working with external systems e.g. database, event bus
@@ -187,7 +159,7 @@ Clean architecture puts the business logic and application model at the center o
 
 ## Domain-Centric Architecture
 
-Domain Centric Architecture is used to split the code in the Core and Application layer by use-cases e.g. Locations, Weather.
+Domain Centric Architecture is used to split the code in the Core and Application layer by use-cases e.g. Accounts, Customers.
 
 The code within each use-case folder is split by object type e.g. Entities, Services.
 
@@ -233,13 +205,10 @@ Domain Events are matched to their relevant Domain Event Handlers using MediatR.
 A full guide to the dispatching technique can be found here:
 https://betterprogramming.pub/domain-driven-design-domain-events-and-integration-events-in-net-5a2a58884aaa
 
-## Data Transfer Objects and Mapping
+## Read Model Projections
 
-The API returns Data Transfer Object (DTO) classes. These are dumb POCO classes with public getters and setters - this is important to allow them to be serialized easily.
+Each Read Model has a ReadModelHandler in the Application layer to subscribe to relevant Domain Events for generating and updating the Read Model.
 
-The Application layer maps **Entities** from the database into **DTOs** using the **Automapper** Nuget package. Mappings are defined in the Application layer in the `MappingProfile` folders.
-
-The separation between Entity and DTO is very important to isolate the Core/Domain layer from changes to the API. It allows for backwards compatible changes to be implemented.
 
 # Migrations
 
@@ -276,7 +245,7 @@ The following steps must be performed to setup your local environment for runnin
 
 Docker is used to start the following services locally:
 
-- SQL Server or PostgreSQL
+- SQL Server
 
 A **dev** profile is included in the docker-compose file to run the required local services:
 ```
@@ -305,7 +274,6 @@ Before running the application your local services must be running and you must 
 
 The following projects must be set as startup projects to run the entire solution:
 - **AspNetCore.EventSourcing.Api**
-- **AspNetCore.EventSourcing.Web**
 
 # Testing
 
@@ -330,25 +298,3 @@ The API tests should test the *API* and *Application* layers of the solution. An
 ## Architecture Tests
 
 Tests are performed on the architecture of the solution using **NetArchTest**. These tests check that the Clean Architecture layering is adhered to and that the development principles and naming conventions being used are not breached.
-
-## Automated Acceptance Tests
-
-Automated acceptance tests are run against a local instance of the website.
-
-The tests are run as .NET Unit Tests using Playwright and SpecFlow.
-
-### Playwright
-
-Playwright is an automated UI Testing framework developed by Microsoft. If can be installed by following the instructions here: https://playwright.dev/docs/intro#installation
-
-Code can be auto-generated from using the web application by running the following:
-
-```powershell
-PowerShell.exe -ExecutionPolicy Bypass -File .\tests\AspNetCore.EventSourcing.AcceptanceTests\bin\Debug\net7.0\playwright.ps1 codegen https://localhost:44411/
-```
-
-### SpecFlow
-
-SpecFlow is used for Business Driven Development (BDD). Specification feature files are used to execute tests.
-
-The **SpecFlow Visual Studio extension** must be downloaded to create and use SpecFlow features files.

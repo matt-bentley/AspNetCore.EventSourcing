@@ -8,10 +8,10 @@ namespace AspNetCore.EventSourcing.Infrastructure.Repositories
     internal sealed class UnitOfWork : IUnitOfWork
     {
         private readonly BankingContext _context;
-        private readonly IMediator _mediator;
+        private readonly IPublisher _mediator;
 
         public UnitOfWork(BankingContext context,
-            IMediator mediator)
+            IPublisher mediator)
         {
             _context = context;
             _mediator = mediator;

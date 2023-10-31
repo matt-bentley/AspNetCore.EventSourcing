@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using AspNetCore.EventSourcing.Infrastructure.Serialization;
 
 namespace AspNetCore.EventSourcing.Infrastructure.Configurations
 {
@@ -21,7 +22,8 @@ namespace AspNetCore.EventSourcing.Infrastructure.Configurations
             var serializerOptions = new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Auto,
-                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                ContractResolver = PrivatePropertyResolver.Instance
             };
 
             Func<List<Event>, List<Event>, bool> equalityComparer = (left, right) =>
