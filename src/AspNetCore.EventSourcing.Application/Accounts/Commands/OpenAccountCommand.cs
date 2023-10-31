@@ -37,7 +37,7 @@ namespace AspNetCore.EventSourcing.Application.Accounts.Commands
             await CheckForExistingAccountAsync(account.AccountNumber);
          
             await _repository.SaveAsync(account);
-            await UnitOfWork.CommitAsync();
+            await UnitOfWork.CommitAsync(); // This will save the Account and AccountReadModel in the same transaction
         }
 
         private async Task CheckForExistingAccountAsync(string accountNumber)

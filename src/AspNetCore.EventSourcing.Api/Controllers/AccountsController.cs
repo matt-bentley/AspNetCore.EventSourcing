@@ -13,9 +13,9 @@ namespace AspNetCore.EventSourcing.Api.Controllers
     [Produces("application/json")]
     public sealed class AccountsController : ControllerBase
     {
-        private readonly IMediator _mediator;
+        private readonly ISender _mediator;
 
-        public AccountsController(IMediator mediator)
+        public AccountsController(ISender mediator)
         {
             _mediator = mediator;
         }
